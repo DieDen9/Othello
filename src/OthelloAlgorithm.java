@@ -6,5 +6,5 @@ public abstract interface OthelloAlgorithm
   
   public abstract OthelloAction evaluate(OthelloPosition o);
   
-  public abstract void setSearchDepth(int d);
+  public abstract void setMaxSearchDepth(int d);
 }

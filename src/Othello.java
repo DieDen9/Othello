@@ -4,7 +4,7 @@ public class Othello {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		   String str;
-		   double Seconds = 6; // default value for time limit
+		   double Seconds = 2; // default value for time limit
 		   //System.out.println(args.length+"here");
 		    if (args.length > 0) {
 		      str = args[0];
@@ -21,9 +21,9 @@ public class Othello {
 		    OthelloPosition position = new OthelloPosition(str);
 		    
 		    MinMax mm = new MinMax(new GameEvaluator());
-		    int depth = new DepthGenerator().CalculateDepth(Seconds);
+		    int Maxdepth = 12;
 		   // System.out.println(depth);
-		   // mm.setSearchDepth(depth);
+		   mm.setMaxSearchDepth(Maxdepth);
 		    mm.setTimeLimit(Seconds);
 		    mm.setStart(System.currentTimeMillis());
 		    OthelloAction action = mm.evaluate(position);
