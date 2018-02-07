@@ -27,7 +27,7 @@ public class Othello {
 		    mm.setTimeLimit(Seconds);
 		    mm.setStart(System.currentTimeMillis());
 		    OthelloAction action = mm.evaluate(position);
-		    
+		   // System.out.println(position.getMoves());
 		    action.print();
 		    //position.illustrate();
 		  }
