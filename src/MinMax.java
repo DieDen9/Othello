@@ -78,7 +78,7 @@ public class MinMax
         OthelloAction act1;
 
         // while(tEnd-tStart < tLimit ){
-        System.out.println("depthMax: " + depth);
+        //System.out.println("depthMax: " + depth);
 
 
         if (depth > MaxDepth) {
@@ -126,7 +126,7 @@ public class MinMax
         OthelloAction TempAct = new OthelloAction(0, 0);
         //TempAct.value = new GameEvaluator().evaluate(pos);
 
-        System.out.println("depthMin: " + depth);
+       // System.out.println("depthMin: " + depth);
 
         // if(tEnd-tStart < tLimit ){
 

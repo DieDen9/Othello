@@ -16,7 +16,7 @@ public class Othello {
 		    }		      
 		     else {
 		      str = "WEEEEEEEEEEEEEEEEEEEEEEEEEEEOXEEEEEEXOEEEEEEEEEEEEEEEEEEEEEEEEEEE";
-		      System.out.println("No time limit was set, Using default time limit: "+Seconds);		      
+				//System.out.println("No time limit was set, Using default time limit: "+Seconds);
 		    }
 		    OthelloPosition position = new OthelloPosition(str);
 		    
