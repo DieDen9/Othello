@@ -7,50 +7,50 @@ public class GameEvaluator
 		implements OthelloEvaluator
 {
 
-	public int evaluate(AbstractOthelloPosition OthPos1)
-	{
-		int eval =0;
+	public int evaluate(AbstractOthelloPosition OthPos1) {
+		int eval = 0;
 
 		OthelloPosition OthPos = (OthelloPosition) OthPos1;
 
 		ArrayList<OthelloAction> Possible_moves = OthPos.getMoves();
 		int move_num = Possible_moves.size();
-		for(int i=0; i<Possible_moves.size();i++){
+		for (int i = 0; i < Possible_moves.size(); i++) {
 
 			//checking corners first
-			if((Possible_moves.get(i).getRow() ==  1 || Possible_moves.get(i).getRow() == 8) && (Possible_moves.get(i).getColumn() == 1 || Possible_moves.get(i).getColumn() == 8)){
+			if ((Possible_moves.get(i).getRow() == 1 || Possible_moves.get(i).getRow() == 8) && (Possible_moves.get(i).getColumn() == 1 || Possible_moves.get(i).getColumn() == 8)) {
 				//eval += sign(OthPos)*10  + board_counter(OthPos);
-				eval += 15 + board_counter(OthPos);
+				eval += 15;
 			}
 			// checking risky region8
-			else if((Possible_moves.get(i).getRow() == 2) || (Possible_moves.get(i).getRow() == 7) || (Possible_moves.get(i).getColumn() == 2) || (Possible_moves.get(i).getColumn() == 7)){
+			else if ((Possible_moves.get(i).getRow() == 2) || (Possible_moves.get(i).getRow() == 7) && (Possible_moves.get(i).getColumn() == 2) || (Possible_moves.get(i).getColumn() == 7)) {
 				//eval += sign(OthPos)*(-10  -board_counter(OthPos));
-				eval += 0;
+				eval += -5;
 			}
 			// good regions to place a piece
-			else if((Possible_moves.get(i).getRow() == 1) && ((Possible_moves.get(i).getColumn() == 3) || (Possible_moves.get(i).getColumn() == 4) || (Possible_moves.get(i).getColumn() == 5) || (Possible_moves.get(i).getColumn() == 6))){
+			else if (((Possible_moves.get(i).getRow() == 2) || (Possible_moves.get(i).getRow() == 7)) && ((Possible_moves.get(i).getColumn() == 1) || (Possible_moves.get(i).getColumn() == 8))) {
 				//eval +=sign(OthPos)*5 + board_counter(OthPos);
-				eval += 5 + board_counter(OthPos);
-			}
-			else if((Possible_moves.get(i).getRow() == 8) && ((Possible_moves.get(i).getColumn() == 3) || (Possible_moves.get(i).getColumn() == 4) || (Possible_moves.get(i).getColumn() == 5) || (Possible_moves.get(i).getColumn() == 6))){
-				//eval += sign(OthPos)*5 + board_counter(OthPos);
-				eval += 3;
-			}
-			else if((Possible_moves.get(i).getColumn() == 1) && ((Possible_moves.get(i).getRow() == 3) || (Possible_moves.get(i).getRow() == 4) || (Possible_moves.get(i).getRow() == 5) || (Possible_moves.get(i).getRow() == 6))){
-				//	eval += sign(OthPos)*5 + board_counter(OthPos);
-				eval += 3;
-			}
-			else if((Possible_moves.get(i).getColumn() == 8) && ((Possible_moves.get(i).getRow() == 3) || (Possible_moves.get(i).getRow() == 4) || (Possible_moves.get(i).getRow() == 5) || (Possible_moves.get(i).getRow() == 6))){
-				//	eval += sign(OthPos)*5 + board_counter(OthPos);
 				eval += 5;
-			}
-			else
-				eval += board_counter(OthPos);
+			} else if (((Possible_moves.get(i).getRow() == 1) || (Possible_moves.get(i).getRow() == 8)) && ((Possible_moves.get(i).getColumn() == 2) || (Possible_moves.get(i).getColumn() == 7))) {
+				//eval += sign(OthPos)*5 + board_counter(OthPos);
+				eval += 5;
+			} else if ((Possible_moves.get(i).getRow() == 3) || ((Possible_moves.get(i).getRow() == 6)) && ((Possible_moves.get(i).getColumn() == 1) || (Possible_moves.get(i).getColumn() == 8))) {
+				//	eval += sign(OthPos)*5 + board_counter(OthPos);
+				eval += 7;
+			} else if ((Possible_moves.get(i).getRow() == 4) || ((Possible_moves.get(i).getRow() == 5)) && ((Possible_moves.get(i).getColumn() == 1) || (Possible_moves.get(i).getColumn() == 8))) {
+				//	eval += sign(OthPos)*5 + board_counter(OthPos);
+				eval += 7;
+			} else if ((Possible_moves.get(i).getRow() == 1) || ((Possible_moves.get(i).getRow() == 8)) && ((Possible_moves.get(i).getColumn() == 3) || (Possible_moves.get(i).getColumn() == 6))) {
+				//	eval += sign(OthPos)*5 + board_counter(OthPos);
+				eval += 7;
+			} else if ((Possible_moves.get(i).getRow() == 1) || ((Possible_moves.get(i).getRow() == 8)) && ((Possible_moves.get(i).getColumn() == 4) || (Possible_moves.get(i).getColumn() == 5))) {
+				//	eval += sign(OthPos)*5 + board_counter(OthPos);
+				eval += 7;
+			} else
+				eval += 1;
 
 		}
 		return eval;
 	}
-
 
 
 
