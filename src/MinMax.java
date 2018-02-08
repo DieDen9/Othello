@@ -19,12 +19,12 @@ public class MinMax
 
     public MinMax() {
         this.evaluator = new GameEvaluator();
-        this.MaxDepth = 9;
+        this.MaxDepth = 12;
     }
 
     public MinMax(OthelloEvaluator ev) {
         this.evaluator = ev;
-        this.MaxDepth = 9;
+        this.MaxDepth = 12;
     }
 
     public MinMax(OthelloEvaluator ev, int d) {
