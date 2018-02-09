@@ -17,36 +17,36 @@ public class GameEvaluator
 		for (int i = 0; i < Possible_moves.size(); i++) {
 
 			//checking corners first
-			if ((Possible_moves.get(i).getRow() == 1 || Possible_moves.get(i).getRow() == 8) && (Possible_moves.get(i).getColumn() == 1 || Possible_moves.get(i).getColumn() == 8)) {
+			if ((Possible_moves.get(i).getRow() == 0 || Possible_moves.get(i).getRow() == 7) && (Possible_moves.get(i).getColumn() == 0 || Possible_moves.get(i).getColumn() == 7)) {
 				//eval += sign(OthPos)*10  + board_counter(OthPos);
-				eval += 15;
+				eval += 15*sign(OthPos);
 			}
 			// checking risky region8
-			else if ((Possible_moves.get(i).getRow() == 2) || (Possible_moves.get(i).getRow() == 7) && (Possible_moves.get(i).getColumn() == 2) || (Possible_moves.get(i).getColumn() == 7)) {
+			else if ((Possible_moves.get(i).getRow() == 1) || (Possible_moves.get(i).getRow() == 6) && (Possible_moves.get(i).getColumn() == 1) || (Possible_moves.get(i).getColumn() == 6)) {
 				//eval += sign(OthPos)*(-10  -board_counter(OthPos));
-				eval += -5;
+				eval += -5*sign(OthPos);
 			}
 			// good regions to place a piece
-			else if (((Possible_moves.get(i).getRow() == 2) || (Possible_moves.get(i).getRow() == 7)) && ((Possible_moves.get(i).getColumn() == 1) || (Possible_moves.get(i).getColumn() == 8))) {
+			else if (((Possible_moves.get(i).getRow() == 1) || (Possible_moves.get(i).getRow() == 6)) && ((Possible_moves.get(i).getColumn() == 0) || (Possible_moves.get(i).getColumn() == 7))) {
 				//eval +=sign(OthPos)*5 + board_counter(OthPos);
-				eval += 5;
-			} else if (((Possible_moves.get(i).getRow() == 1) || (Possible_moves.get(i).getRow() == 8)) && ((Possible_moves.get(i).getColumn() == 2) || (Possible_moves.get(i).getColumn() == 7))) {
+				eval += 5*sign(OthPos);
+			} else if (((Possible_moves.get(i).getRow() == 0) || (Possible_moves.get(i).getRow() == 7)) && ((Possible_moves.get(i).getColumn() == 1) || (Possible_moves.get(i).getColumn() == 6))) {
 				//eval += sign(OthPos)*5 + board_counter(OthPos);
-				eval += 5;
-			} else if ((Possible_moves.get(i).getRow() == 3) || ((Possible_moves.get(i).getRow() == 6)) && ((Possible_moves.get(i).getColumn() == 1) || (Possible_moves.get(i).getColumn() == 8))) {
+				eval += 5*sign(OthPos);
+			} else if ((Possible_moves.get(i).getRow() == 2) || ((Possible_moves.get(i).getRow() == 5)) && ((Possible_moves.get(i).getColumn() == 0) || (Possible_moves.get(i).getColumn() == 7))) {
 				//	eval += sign(OthPos)*5 + board_counter(OthPos);
-				eval += 7;
-			} else if ((Possible_moves.get(i).getRow() == 4) || ((Possible_moves.get(i).getRow() == 5)) && ((Possible_moves.get(i).getColumn() == 1) || (Possible_moves.get(i).getColumn() == 8))) {
+				eval += 7*sign(OthPos);
+			} else if ((Possible_moves.get(i).getRow() == 3) || ((Possible_moves.get(i).getRow() == 4)) && ((Possible_moves.get(i).getColumn() == 0) || (Possible_moves.get(i).getColumn() == 7))) {
 				//	eval += sign(OthPos)*5 + board_counter(OthPos);
-				eval += 7;
-			} else if ((Possible_moves.get(i).getRow() == 1) || ((Possible_moves.get(i).getRow() == 8)) && ((Possible_moves.get(i).getColumn() == 3) || (Possible_moves.get(i).getColumn() == 6))) {
+				eval += 7*sign(OthPos);
+			} else if ((Possible_moves.get(i).getRow() == 0) || ((Possible_moves.get(i).getRow() == 7)) && ((Possible_moves.get(i).getColumn() == 2) || (Possible_moves.get(i).getColumn() == 5))) {
 				//	eval += sign(OthPos)*5 + board_counter(OthPos);
-				eval += 7;
-			} else if ((Possible_moves.get(i).getRow() == 1) || ((Possible_moves.get(i).getRow() == 8)) && ((Possible_moves.get(i).getColumn() == 4) || (Possible_moves.get(i).getColumn() == 5))) {
+				eval += 7*sign(OthPos);
+			} else if ((Possible_moves.get(i).getRow() == 0) || ((Possible_moves.get(i).getRow() == 7)) && ((Possible_moves.get(i).getColumn() == 3) || (Possible_moves.get(i).getColumn() == 4))) {
 				//	eval += sign(OthPos)*5 + board_counter(OthPos);
-				eval += 7;
+				eval += 7*sign(OthPos);
 			} else
-				eval += 1;
+				eval += 1*sign(OthPos);
 
 		}
 		return eval;

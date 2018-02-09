@@ -19,12 +19,10 @@ public class MinMax
 
     public MinMax() {
         this.evaluator = new GameEvaluator();
-        this.MaxDepth = 12;
     }
 
     public MinMax(OthelloEvaluator ev) {
         this.evaluator = ev;
-        this.MaxDepth = 12;
     }
 
     public MinMax(OthelloEvaluator ev, int d) {
@@ -52,19 +50,19 @@ public class MinMax
     public OthelloAction evaluate(OthelloPosition othPos) {
 
         OthelloPosition localOthelloPosition = (OthelloPosition) othPos;
-        OthelloAction TempAction = new OthelloAction(0, 0, true);
+        OthelloAction TempAction = new OthelloAction(0, 0);
 
-        while (System.currentTimeMillis() - tStart < tLimit) {
-            double end = System.currentTimeMillis();
+      //  while (System.currentTimeMillis() - tStart < tLimit) {
+            double tEnd = System.currentTimeMillis();
             //System.out.println(end -tStart);
-            if (end - tStart < tLimit) {
+            if (tEnd - tStart < tLimit) {
                 if (localOthelloPosition.toMove() == true) {
                     TempAction = getMax(localOthelloPosition, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, System.currentTimeMillis());
                 } else
                     TempAction = getMin(localOthelloPosition, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, System.currentTimeMillis());
             }
 
-        }
+
         return TempAction;
 
     }
@@ -79,41 +77,43 @@ public class MinMax
 
         // while(tEnd-tStart < tLimit ){
         //System.out.println("depthMax: " + depth);
-     //   System.out.println("depthMax: " + depth);
+           //System.out.println("depthMax: " + depth);
 
 
-        if (depth > MaxDepth) {
+        if (depth >= MaxDepth) {
             act1 = new OthelloAction(0, 0);
             act1.value = new GameEvaluator().evaluate(pos);
             return act1;
 
-        }
-        if (!iterator.hasNext()) {
+        } else if (!iterator.hasNext()) {
             act1 = new OthelloAction(0, 0, true);
             act1.value = new GameEvaluator().evaluate(pos);
             return act1;
 
+        } else {
+            OthelloAction act2 = new OthelloAction(0, 0);
+            while (iterator.hasNext() && tEnd - tStart < tLimit) {
+                act1 = (OthelloAction) iterator.next();
+                OthelloPosition oPos = pos.makeMove(act1);
+                //System.out.println(alpha);
+                int nextDepth = depth+1;
+                OthelloAction act3 = getMin(oPos, nextDepth, alpha, beta, System.currentTimeMillis());
+                if (min < act3.value) {
+                    min = act3.value;
+                    act1.value = min;
+                    act2 = act1;
+                }
+                //beta cut-off
+                if (min >= beta) {
+                    act1.value = min;
+                    return act1;
+                }
+                if (min > alpha) {
+                    alpha = min;
+                }
+            }
+            return act2;
         }
-        OthelloAction act2 = new OthelloAction(0, 0);
-        while (iterator.hasNext() && tEnd - tStart < tLimit) {
-            act1 = (OthelloAction) iterator.next();
-            OthelloPosition oPos = pos.makeMove(act1);
-            OthelloAction act3 = getMin(oPos, depth + 1, alpha, beta, System.currentTimeMillis());
-            if (min < act3.value) {
-                min = act3.value;
-                act1.value = min;
-                act2 = act1;
-            }
-            //beta cut-off
-            if (min >= beta) {
-                act1.value = min;
-                return act1;
-            }
-            if (min > alpha) {
-                alpha = min;
-            }
-        }
-        return act2;
     }
     //}
 
@@ -124,27 +124,28 @@ public class MinMax
         ArrayList<OthelloAction> moves = pos.getMoves();
         Iterator<OthelloAction> iterator = moves.iterator();
         OthelloAction act1;
-        OthelloAction TempAct = new OthelloAction(0, 0);
+       // OthelloAction TempAct = new OthelloAction(0, 0);
         //TempAct.value = new GameEvaluator().evaluate(pos);
 
        // System.out.println("depthMin: " + depth);
-        //System.out.println("depthMin: " + depth);
+      // System.out.println("depthMin: " + depth);
 
         // if(tEnd-tStart < tLimit ){
 
 
-        if (depth > MaxDepth) {
+        if (depth >= MaxDepth) {
             act1 = new OthelloAction(0, 0);
             act1.value = new GameEvaluator().evaluate(pos);
             //System.out.println(act1.value);
             return act1;
 
         }
-        if (!iterator.hasNext()) {
+        else if (!iterator.hasNext()) {
             act1 = new OthelloAction(0, 0, true);
             act1.value = new GameEvaluator().evaluate(pos);
             return act1;
         }
+        else {
         OthelloAction act2 = new OthelloAction(0, 0);
         moves = pos.getMoves();
         iterator = moves.iterator();
@@ -152,7 +153,10 @@ public class MinMax
 
             act1 = (OthelloAction) iterator.next();
             OthelloPosition localOthelloPosition = pos.makeMove(act1);
-            OthelloAction act3 = getMax(localOthelloPosition, depth + 1, alpha, beta, System.currentTimeMillis());
+          //  System.out.println("beta:"+ beta);
+            int nextDepth = depth+1;
+
+            OthelloAction act3 = getMax(localOthelloPosition, nextDepth, alpha, beta, System.currentTimeMillis());
             //System.out.println(act3.value);
             if (max > act3.value) {
                 max = act3.value;
@@ -176,4 +180,4 @@ public class MinMax
         //return TempAct;
     }
 
-}
+}}
