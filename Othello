@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#cd "$(dirname "$0")/out/production/Othello"
-cd /c/Users/MSUBM5/Desktop/Otho/
+cd "$(dirname "$0")/out/production/Othello"
+#cd /c/Users/MSUBM5/Desktop/Otho/
 
-#java Othello $1 $2
-python Othello.py $1 $2
+java Othello $1 $2
+#python Othello.py $1 $2

@@ -1,4 +1,5 @@
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -70,32 +71,31 @@ public class MinMax
     }
 
 
-    public int alphabeta(OthelloPosition pos, int depth, int alpha, int beta, boolean turn) {
+    public int alphabeta(OthelloPosition pos, int depth, int alpha, int beta) {
 
         ArrayList moves = pos.getMoves();
         Iterator iterator = moves.iterator();
         OthelloAction act1;
         int value;
+        int tempValue = 0;
 
 
-        if (turn) {
-       //     System.out.println("depthMax"+depth);
+        if (pos.toMove()) {
+            System.out.println("depthMax" + depth);
 
-       //     if (depth >= MaxDepth) {
-       //         value = new GameEvaluator().evaluate(pos);
-        //        return value;
-        //    }
+            if (depth >= MaxDepth) {
+                value = new GameEvaluator().evaluate(pos);
+                return value;
 
-
-            while (iterator.hasNext() && depth < MaxDepth) {
-                if (tStart - System.currentTimeMillis() <= tLimit) {
+            }
+            if (System.currentTimeMillis() - tStart <= tLimit) {
+            while (iterator.hasNext()) {
 
 
                     act1 = (OthelloAction) iterator.next();
                     OthelloPosition oPos = pos.makeMove(act1);
-                    //System.out.println(alpha);
                     int nextDepth = depth + 1;
-                    value = alphabeta(oPos, nextDepth, alpha, beta, !turn);
+                    value = alphabeta(oPos, nextDepth, alpha, beta);
 
                     //beta cut-off
                     if (value > alpha) {
@@ -105,87 +105,94 @@ public class MinMax
                         break;
                     }
                 }
-       }
+
+            }
             return alpha;
-    }
-            else
 
-    {
-       // System.out.println("min "+depth);
+        } else
 
-      //  if (depth >= MaxDepth) {
+        {
+             System.out.println("depthMin:"+depth);
 
 
-      //      value = new GameEvaluator().evaluate(pos);
-     //       return value;
-     //   }
+            if (depth >= MaxDepth) {
 
-            while (iterator.hasNext() && depth< MaxDepth) {
-                if (tStart - System.currentTimeMillis() <= tLimit) {
-                act1 = (OthelloAction) iterator.next();
-                OthelloPosition oPos = pos.makeMove(act1);
-                //System.out.println(alpha);
-                int nextDepth = depth + 1;
-                 //   System.out.println("depthMin:"+depth);
-
-                    value = alphabeta(oPos, nextDepth, alpha, beta, !turn);
-
-                //beta cut-off
-                if (value < beta) {
-                    beta = value;
-                }
-                if (beta <= alpha) {
-                    break;
-                }
+                value = new GameEvaluator().evaluate(pos);
+                //System.out.println("value:" + value);
+                return value;
             }
+            if (System.currentTimeMillis() - tStart <= tLimit) {
+                while (iterator.hasNext()) {
 
+
+                    //System.out.println("min "+depth);
+
+                    act1 = (OthelloAction) iterator.next();
+                    OthelloPosition oPos = pos.makeMove(act1);
+                    //System.out.println(alpha);
+                    int nextDepth = depth + 1;
+                    // System.out.println("depthMin:"+depth);
+
+                    value = alphabeta(oPos, nextDepth, alpha, beta);
+
+                    //beta cut-off
+                    if (value < beta) {
+                        beta = value;
+                    }
+                    if (beta <= alpha) {
+                        break;
+                    }
+                }
+
+
+            }
+            return beta;
         }
-        return beta;
+        //System.out.println("value:" + tempValue);
 
     }
 
-}
+    public OthelloAction algorithm(OthelloPosition pos) {
+        ArrayList<OthelloAction> possible_moves = pos.getMoves();
+        Iterator<OthelloAction> moveIterator = possible_moves.iterator();
+        List<Integer> values = new ArrayList();
+        int max = Integer.MIN_VALUE;
+        int maxIndex = -1;
 
-public OthelloAction algorithm(OthelloPosition pos)
-{
-    ArrayList<OthelloAction> possible_moves = pos.getMoves();
-    Iterator<OthelloAction> moveIterator = possible_moves.iterator();
-    List<Integer> values = new ArrayList();
-    int max = Integer.MIN_VALUE;
-    int maxIndex = -1;
+        if (!moveIterator.hasNext()) {
 
-    if(!moveIterator.hasNext()){
-
-        OthelloAction act1 = new OthelloAction(0,0,true);
-        return act1;
-    }
-
-    while(System.currentTimeMillis() - tStart <= tLimit)
-    {
-
-
-            while(moveIterator.hasNext()){
-
-                OthelloAction act = moveIterator.next();
-                OthelloPosition oPos =  pos.makeMove(act);
-                int val = alphabeta(oPos,0,-10000,+10000, true);
-                ///System.out.println(val);
-                values.add(val);
-
-            }
-            for(int j = 0; j< values.size(); j++){
-                int item = values.get(j);
-                if(item > max)
-                    max = item;
-                    maxIndex = j;
-
-            }
-
-
+            OthelloAction act1 = new OthelloAction(0, 0, true);
+            act1.value = new GameEvaluator().evaluate(pos);
+            return act1;
         }
 
-    return possible_moves.get(maxIndex);
-}
+        // while(System.currentTimeMillis() - tStart <= tLimit)
+
+
+        while (moveIterator.hasNext()) {
+
+            OthelloAction act = moveIterator.next();
+            OthelloPosition oPos = pos.makeMove(act);
+            int val = alphabeta(pos, 0, -10000, 10000);
+            values.add(val);
+
+        }
+        for (int j = 0; j < values.size(); j++) {
+            int item = values.get(j);
+            if (item > max)
+                max = item;
+            maxIndex = j;
+
+        }
+
+
+      //  System.out.println(maxIndex);
+      //  for (int k = 0; k < possible_moves.size(); k++) {
+          //  System.out.println(possible_moves.get(k).getRow() + "," + possible_moves.get(k).getColumn());
+          //  System.out.println(possible_moves.get(k).getValue());
+       // }
+        return possible_moves.get(maxIndex);
+    }
 
 
     protected OthelloAction getMax(OthelloPosition pos, int depth, int alpha, int beta, double tEnd) {

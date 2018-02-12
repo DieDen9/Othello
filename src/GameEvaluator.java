@@ -46,7 +46,7 @@ public class GameEvaluator
 				//	eval += sign(OthPos)*5 + board_counter(OthPos);
 				eval += 7*sign(OthPos);
 			} else
-				eval += 1*sign(OthPos);
+				eval += 1*sign(OthPos) +board_counter(OthPos);
 
 		}
 		return eval;
