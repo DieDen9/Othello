@@ -79,16 +79,17 @@ public class MinMax
 
 
         if (turn) {
+       //     System.out.println("depthMax"+depth);
 
-            if (depth >= MaxDepth) {
-                value = new GameEvaluator().evaluate(pos);
-                return value;
-            }
+       //     if (depth >= MaxDepth) {
+       //         value = new GameEvaluator().evaluate(pos);
+        //        return value;
+        //    }
 
 
-            while (iterator.hasNext()) {
-
+            while (iterator.hasNext() && depth < MaxDepth) {
                 if (tStart - System.currentTimeMillis() <= tLimit) {
+
 
                     act1 = (OthelloAction) iterator.next();
                     OthelloPosition oPos = pos.makeMove(act1);
@@ -104,21 +105,22 @@ public class MinMax
                         break;
                     }
                 }
-
-
-        }
+       }
             return alpha;
     }
             else
 
     {
+       // System.out.println("min "+depth);
 
-        if (depth >= MaxDepth) {
-            value = new GameEvaluator().evaluate(pos);
-            return value;
-        }
+      //  if (depth >= MaxDepth) {
 
-            while (iterator.hasNext()) {
+
+      //      value = new GameEvaluator().evaluate(pos);
+     //       return value;
+     //   }
+
+            while (iterator.hasNext() && depth< MaxDepth) {
                 if (tStart - System.currentTimeMillis() <= tLimit) {
                 act1 = (OthelloAction) iterator.next();
                 OthelloPosition oPos = pos.makeMove(act1);
@@ -166,13 +168,14 @@ public OthelloAction algorithm(OthelloPosition pos)
 
                 OthelloAction act = moveIterator.next();
                 OthelloPosition oPos =  pos.makeMove(act);
-                int val = alphabeta(oPos,0,10000,-10000, oPos.toMove());
+                int val = alphabeta(oPos,0,-10000,+10000, true);
+                ///System.out.println(val);
                 values.add(val);
 
             }
             for(int j = 0; j< values.size(); j++){
                 int item = values.get(j);
-                if(Math.abs(item) > max)
+                if(item > max)
                     max = item;
                     maxIndex = j;
 
