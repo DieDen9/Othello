@@ -1,6 +1,5 @@
 #!/bin/bash
 
-#cd /home/mrc16/mrc16msr/workspace/othello/src
 cd "$(dirname "$0")/out/production/Othello"
 
 java Othello $1 $2

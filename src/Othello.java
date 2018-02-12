@@ -4,7 +4,7 @@ public class Othello {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		   String str;
-		   double Seconds = 2; // default value for time limit
+		   double Seconds = 3; // default value for time limit
 		   //System.out.println(args.length+"here");
 		    if (args.length > 0) {
 		      str = args[0];
@@ -26,8 +26,8 @@ public class Othello {
 		   mm.setMaxSearchDepth(Maxdepth);
 		    mm.setTimeLimit(Seconds);
 		    mm.setStart(System.currentTimeMillis());
-		    OthelloAction action = mm.evaluate(position);
-		   // System.out.println(position.getMoves());
+		    OthelloAction action = mm.algorithm(position);
+		   // System.out.println(action);
 		    action.print();
 		    //position.illustrate();
 		  }
