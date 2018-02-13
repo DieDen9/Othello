@@ -4,14 +4,6 @@ import numpy as np
 import math
 from time import time
 
-n = 8  # board size (even)
-b_ord = [['.' for x in range(n + 1)] for y in range(n + 1)]
-strt_time = None
-# Maxdep=12
-#makeboard='BEXEEOEEEEEXEOEEEEEEXOEEEEEEOOOEEEEEOOXXXEEOEEEXEEEEEOOOOEEEEEEEE'
-#makeboard1=makeboard[1:]
-time_allowed =int(sys.argv[2])
-makeboard = sys.argv[1]
 
 
 # makeboard=makeboard[1:]
@@ -348,40 +340,56 @@ def points(playersymb, computersymb):
     # print('Player points %s . Computer points %s .' % (scores[playersymb], scores[computersymb]))
 
 
-# mainboard=b_ord
-# resetboard()
-br = board(makeboard)
-mainboard = br
-# fullboard()
-symbol = makeboard[0]
-
-playersymb, computersymb = playersymbol(symbol)
-symbol1 = 'O'
-symbol2 = 'X'
-
-p = getbestmoves(mainboard,computersymb)
-
-if (end_move(mainboard, computersymb) == True) or (p == []):
-    print("pass")
-else:
-    tm = time()
-    global_t = tm
-
-# Maxdepth = calculatedepth(time_allowed)
-# Maxdepth = int(Maxdepth)
-# print (Maxdepth)
 
 
-    x,y = algorithm(mainboard,computersymb)
+def main():
+    # mainboard=b_ord
+    # resetboard()
+    global n, time_allowed, symbol, mainboard, global_t, b_ord, symbol1, symbol2
+    n = 8  # board size (even)
+    b_ord = [['.' for x in range(n + 1)] for y in range(n + 1)]
+    strt_time = None
+    # Maxdep=12
+    # makeboard='BEXEEOEEEEEXEOEEEEEEXOEEEEEEOOOEEEEEOOXXXEEOEEEXEEEEEOOOOEEEEEEEE'
+    # makeboard1=makeboard[1:]
+    time_allowed = int(sys.argv[2])
+    time_allowed = time_allowed
+    makeboard = sys.argv[1]
 
-    end_time = time()
+    br = board(makeboard)
+    mainboard = br
+    # fullboard()
+    symbol = makeboard[0]
 
-#print(abs(end_time - global_t))
+    playersymb, computersymb = playersymbol(symbol)
+    symbol1 = 'O'
+    symbol2 = 'X'
+
+    p = getbestmoves(mainboard, computersymb)
+
+    if (end_move(mainboard, computersymb) == True) or (p == []):
+        print("pass")
+    else:
+        tm = time()
+        global_t = tm
+
+        # Maxdepth = calculatedepth(time_allowed)
+        # Maxdepth = int(Maxdepth)
+        # print (Maxdepth)
+
+        x, y = algorithm(mainboard, computersymb)
+
+        end_time = time()
+
+        # print(abs(end_time - global_t))
+
+        # timess(strt_time)
+        # x = bestMove[0]
+        # y = bestMove[1]
+        # makemove(mainboard, playersymb, x, y)
+        # fullboard()
+        print('(%d,%d)' % (y + 1, x + 1))
 
 
-# timess(strt_time)
-# x = bestMove[0]
-# y = bestMove[1]
-# makemove(mainboard, playersymb, x, y)
-# fullboard()
-    print ('(%d,%d)' % (y + 1, x + 1))
+if __name__ == '__main__':
+    main()
