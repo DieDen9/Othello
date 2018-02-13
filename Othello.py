@@ -8,12 +8,10 @@ n = 8  # board size (even)
 b_ord = [['.' for x in range(n + 1)] for y in range(n + 1)]
 strt_time = None
 # Maxdep=12
-makeboard='BEXEEOEEEEEXEOEEEEEEXOEEEEEEOOOEEEEEOOXXXEEOEEEXEEEEEOOOOEEEEEEEE'
-# makeboard1=makeboard[1:]
-#time_allowed = int(sys.argv[2])
-time_allowed = 2
-
-#makeboard = sys.argv[1]
+#makeboard='BEXEEOEEEEEXEOEEEEEEXOEEEEEEOOOEEEEEOOXXXEEOEEEXEEEEEOOOOEEEEEEEE'
+#makeboard1=makeboard[1:]
+time_allowed =int(sys.argv[2])
+makeboard = sys.argv[1]
 
 
 # makeboard=makeboard[1:]
@@ -26,8 +24,8 @@ def board(makeboard):
             c = 'O'
         elif makeboard[i] == 'X':
             c = 'X'
-        columns = ((i - 1) % 8)
-        rows = (i - 1) % 8
+        columns = int(((i - 1) % 8))
+        rows = int((i - 1) / 8)
         b_ord[columns][rows] = c
     return b_ord
 
@@ -135,7 +133,7 @@ def makemove(b_ord, symbol, xstart, ystart):
     fliptiles = valid_move(b_ord, symbol, xstart, ystart)
 
     if fliptiles == False:
-        print("pass")
+        print ("pass")
         return False
 
     b_ord[xstart][ystart] = symbol
@@ -213,39 +211,42 @@ def copyboard(b_ord1):
     return falseboard
 
 
-#
-# def playermove(b_ord, playersymb):
-#     # Let the player type in their move.
-#     # Returns the move as [x, y]
-#     coordinates = ['0', '1', '2', '3', '4', '5', '6', '7']
-#     brac = '('
-#     brac1 = ')'
-#     comma = ','
-#     while True:
-#         # print('Enter move in [x,y] format.')
-#         move = raw_input().lower()
-#
-#         if len(move) == 5 and move[0] in brac and move[1] in coordinates and move[2] in comma and move[
-#             3] in coordinates and move[4] in brac1:
-#             x = int(move[1])
-#             y = int(move[3])
-#             if valid_move(b_ord, playersymb, x, y) == False:
-#                 continue
-#             else:
-#                 break
-#         else:
-#             print('Not Valid. Pls enter other move.')
-#
-#     return [x, y]
+##### extra for making for player
+def playermove(b_ord, playersymb):
+    # Let the player type in their move.
+    # Returns the move as [x, y]
+    coordinates = ['0', '1', '2', '3', '4', '5', '6', '7']
+    brac = '('
+    brac1 = ')'
+    comma = ','
+    while True:
+        # print('Enter move in [x,y] format.')
+        move = raw_input().lower()
+
+        if len(move) == 5 and move[0] in brac and move[1] in coordinates and move[2] in comma and move[
+            3] in coordinates and move[4] in brac1:
+            x = int(move[1])
+            y = int(move[3])
+            if valid_move(b_ord, playersymb, x, y) == False:
+                continue
+            else:
+                break
+        else:
+            print('Not Valid. Pls enter other move.')
+
+    return [x, y]
 
 
 def alphabeta(state, dep, maxdep, alpha, beta, player):
+
+
     if player == +1:
         possibleMoves = getbestmoves(state, symbol1)
 
+
         if (dep >= maxdep):
-            value = EvalBoard(state, symbol1)
-            # print (dep)
+            value=EvalBoard(state, symbol1)
+            #print (dep)
             return (value)
 
         for x, y in possibleMoves:
@@ -261,8 +262,8 @@ def alphabeta(state, dep, maxdep, alpha, beta, player):
                 if val > alpha:
                     alpha = val
 
-                    # print(best)
-                    # print(alpha)
+                        # print(best)
+                        # print(alpha)
                 if beta <= alpha:
                     break
 
@@ -297,7 +298,7 @@ def alphabeta(state, dep, maxdep, alpha, beta, player):
 
 def algorithm(mainboard, computersymb):
     possiblemoves = getbestmoves(mainboard, computersymb)
-    # print (possiblemoves)
+    #print (possiblemoves)
     value = []
     move = []
     t = time()
@@ -305,32 +306,30 @@ def algorithm(mainboard, computersymb):
     while (st < time_allowed):
         Maxdepth = 0
         best = possiblemoves[0]
-        if possiblemoves != []:
-            for x, y in possiblemoves:
+        if possiblemoves!=[]:
+            for x,y in possiblemoves:
                 brd_cpy = copyboard(mainboard)
                 makemove(brd_cpy, computersymb, x, y)
                 val = alphabeta(brd_cpy, 0, Maxdepth, -10000, 10000, 1)
                 value.append(val)
-                Maxdepth = Maxdepth + 1
-                move.append([x, y])
-                # print (val)
-            # moveindex = value.index(max(value))
-            # best = possiblemoves[moveindex]
+                Maxdepth = Maxdepth+1
+                move.append([x,y])
+                #print (val)
+            #moveindex = value.index(max(value))
+            #best = possiblemoves[moveindex]
         return (move.pop())
-
-
-# def calculatedepth(time_allowed):
-# branch = 15
-# depth = 50
-#
-# nodenum = math.pow(branch, (3 * depth) / 4)
-# # print(nodenum)
-# nodetime = 7 / nodenum
-# # print(nodetime)
-# value = math.log((time_allowed / nodetime), 20)
-# depthfin = (4 * value) / 3
-# # print(depthfin)
-# return math.floor(depthfin)
+#def calculatedepth(time_allowed):
+    #branch = 15
+    #depth = 50
+    #
+    # nodenum = math.pow(branch, (3 * depth) / 4)
+    # # print(nodenum)
+    # nodetime = 7 / nodenum
+    # # print(nodetime)
+    # value = math.log((time_allowed / nodetime), 20)
+    # depthfin = (4 * value) / 3
+    # # print(depthfin)
+    # return math.floor(depthfin)
 
 
 def end_move(b_ord, playersymb):
@@ -360,28 +359,29 @@ playersymb, computersymb = playersymbol(symbol)
 symbol1 = 'O'
 symbol2 = 'X'
 
-p = getbestmoves(mainboard, computersymb)
+p = getbestmoves(mainboard,computersymb)
 
 if (end_move(mainboard, computersymb) == True) or (p == []):
-    print
-    'pass'
+    print("pass")
 else:
     tm = time()
     global_t = tm
 
-    # Maxdepth = calculatedepth(time_allowed)
-    # Maxdepth = int(Maxdepth)
-    # print (Maxdepth)
+# Maxdepth = calculatedepth(time_allowed)
+# Maxdepth = int(Maxdepth)
+# print (Maxdepth)
 
-    x, y = algorithm(mainboard, computersymb)
+
+    x,y = algorithm(mainboard,computersymb)
 
     end_time = time()
 
-    # print(abs(end_time - global_t))
+#print(abs(end_time - global_t))
 
-    # timess(strt_time)
-    # x = bestMove[0]
-    # y = bestMove[1]
-    # makemove(mainboard, playersymb, x, y)
-    # fullboard()
-    print('(%d,%d)' % (y + 1, x + 1))
+
+# timess(strt_time)
+# x = bestMove[0]
+# y = bestMove[1]
+# makemove(mainboard, playersymb, x, y)
+# fullboard()
+    print ('(%d,%d)' % (y + 1, x + 1))
