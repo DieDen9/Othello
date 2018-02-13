@@ -1,12 +1,7 @@
-import random
 import sys
-import numpy as np
-import math
 from time import time
 
 
-
-# makeboard=makeboard[1:]
 def board(makeboard):
     for i in range(1, 65):
 
@@ -22,18 +17,9 @@ def board(makeboard):
     return b_ord
 
 
-def resetboard():
-    if n % 2 == 0:  # if board size is even
-        s = (n - 2) / 2
-        b_ord[s][s] = 'O'
-        b_ord[n - 1 - s][s] = 'X'
-        b_ord[s][n - 1 - s] = 'X'
-        b_ord[n - 1 - s][n - 1 - s] = 'O'
-
-
-#### visualization of board
-def fullboard():
-    m = len(str(n - 1))
+# visualization of board
+def print_board():
+    m = len(str(8 - 1))
     for y in range(8):
         row = ''
         for x in range(8):
@@ -52,7 +38,7 @@ def isOnBoard(x, y):
     return x >= 0 and x <= 7 and y >= 0 and y <= 7
 
 
-def valid_move(b_ord, symbol, xstart, ystart):
+def isValid(b_ord, symbol, xstart, ystart):
     # Returns False if the player's move invalid.
     # If it is a valid move, returns a list of spaces that would become the player's if they made a move here.
     if b_ord[xstart][ystart] != '.' or not isOnBoard(xstart, ystart):
@@ -63,7 +49,7 @@ def valid_move(b_ord, symbol, xstart, ystart):
     if symbol == 'X':
         opp_symbol = 'O'
     else:
-        opp_symbol = 'X'  ###########
+        opp_symbol = 'X'
 
     fliptiles = []
     for xdir, ydir in [[0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1]]:
@@ -83,8 +69,7 @@ def valid_move(b_ord, symbol, xstart, ystart):
             while b_ord[x][y] == opp_symbol:
                 x += xdir
                 y += ydir
-                # print(x)
-                # print(y)
+
                 if not isOnBoard(x, y):  # break out of while loop, then continue in for loop
                     break
             if not isOnBoard(x, y):
@@ -100,295 +85,222 @@ def valid_move(b_ord, symbol, xstart, ystart):
 
     b_ord[xstart][ystart] = '.'  # restore the empty space
     if len(fliptiles) == 0:
-        #	print 'pass' # If no tiles were flipped, this is not a valid move.
         return False
-    # print (fliptiles)
     return fliptiles
 
 
-def getbestmoves(b_ord, symbol):
+def getMoves(b_ord, symbol):
     # Returns a list of [x,y] lists of valid moves for the given player on the given board.
-    bestmoves = []
+    moves = []
 
     for x in range(8):
         for y in range(8):
-            if valid_move(b_ord, symbol, x, y) != False:
-                bestmoves.append([x, y])
+            if isValid(b_ord, symbol, x, y) != False:
+                moves.append([x, y])
                 # print(bestmoves)
 
-    return bestmoves
+    return moves
 
 
-def makemove(b_ord, symbol, xstart, ystart):
+def makemove(brd, player, xstart, ystart):
     # Place the tile  and flip any of the opponent's pieces.
     # Returns False if this is an invalid move, True if it is valid.
-    fliptiles = valid_move(b_ord, symbol, xstart, ystart)
+    fliptiles = isValid(brd, player, xstart, ystart)
 
     if fliptiles == False:
-        print ("pass")
+        print("pass")
         return False
 
-    b_ord[xstart][ystart] = symbol
+    brd[xstart][ystart] = player
     for x, y in fliptiles:
-        b_ord[x][y] = symbol
+        brd[x][y] = player
     return True
 
 
-def firstplayer():
-    # Randomly choose the player who goes first.
-    if random.randint(0, 1) == 0:
-        return 'computer'
-    else:
-        return 'player'
+def cloneBoard(board):
 
+    copy = [['.' for r in range(8)] for c in range(8)]
+    for i in range(8):
+        for j in range(8):
+            copy[i][j] = board[i][j]
 
-def iscorner(x, y):
-    return (x == 0 and y == 0) or (x == 7 and y == 0) or (x == 0 and y == 7) or (x == 7 and y == 7)
+    return copy
 
-
-def playersymbol(symbol):
-    if symbol == 'W':
+def getPly(pl):
+    if pl == 'W':
         return ['X', 'O']
     else:
         return ['O', 'X']
 
 
-def EvalBoard(board, player):
-    total = 0
-    for x in range(8):
-        for y in range(8):
-            if board[x][y] == player:
-                if (x == 0 or x == n - 1) and (y == 0 or y == n - 1):
-                    total += 10  # corner
-                elif (x == 1 or x == n - 2) and (y == 0 or y == 7):
-                    total += 6
-                elif (x == 0 or x == n - 1) and (y == 1 or y == 6):
-                    total += 6
-                elif (x == 1 or x == n - 2) and (y == 1 or y == 6):
-                    total += -5
-                elif (x == 2 or x == n - 3) or (y == 0 or y == n - 1):
-                    total += 8  # side
-                elif (x == 3 or x == n - 4) or (y == 0 or y == n - 1):
-                    total += 8  # side
-                elif (x == 0 or x == n - 1) or (y == 2 or y == n - 3):
-                    total += 8  # side
-                elif (x == 0 or x == n - 1) or (y == 3 or y == n - 4):
-                    total += 8  # side
+def gameEvaluater(board, player):
+    score = 0
+    n = 8
+    for i in range(8):
+        for j in range(8):
+            if board[i][j] == player:
+                # bad regions to place into
+                if (i == 1 or i == n - 2) and (j == 1 or j == 6):
+                    score += -5
+                # corners aka. key regions to win the game
+                elif (i == 0 or i == n - 1) and (j == 0 or j == n - 1):
+                    score += 10
+                # good regions
+                elif (i == 1 or i == n - 2) and (j == 0 or j == 7):
+                    score += 6
+                elif (i == 0 or i == n - 1) and (j == 1 or j == 6):
+                    score += 6
+                # second best regions.
+                elif (i == 2 or i == n - 3) or (j == 0 or j == n - 1):
+                    score += 8
+                elif (i == 3 or i == n - 4) or (j == 0 or j == n - 1):
+                    score += 8
+                elif (i == 0 or i == n - 1) or (j == 2 or j == n - 3):
+                    score += 8
+                elif (i == 0 or i == n - 1) or (j == 3 or j == n - 4):
+                    score += 8
+                # neutral
                 else:
-                    total += 1
-    return total
+                    score += 1
+    # print(score)
+    return score
 
 
-def Score(b_ord):
-    # Determine the score by counting the tiles. Returns a dictionary with keys 'X' and 'O'.
-    xscore = 0
-    oscore = 0
-    for x in range(8):
-        for y in range(8):
-            if b_ord[x][y] == 'X':
-                xscore += 1
-            if b_ord[x][y] == 'O':
-                oscore += 1
-    return xscore - oscore
 
 
-def copyboard(b_ord1):
-    # Make a duplicate of the board list and return the duplicate.
-    falseboard = [['.' for x in range(n)] for y in range(n)]
+def alphabeta(pos, depth, maxDepth, alpha, beta, turn):
+    if turn == +1:
+        possibleMoves = getMoves(pos, White_Player)
 
-    for x in range(8):
-        for y in range(8):
-            falseboard[x][y] = b_ord1[x][y]
-
-    return falseboard
-
-
-##### extra for making for player
-def playermove(b_ord, playersymb):
-    # Let the player type in their move.
-    # Returns the move as [x, y]
-    coordinates = ['0', '1', '2', '3', '4', '5', '6', '7']
-    brac = '('
-    brac1 = ')'
-    comma = ','
-    while True:
-        # print('Enter move in [x,y] format.')
-        move = raw_input().lower()
-
-        if len(move) == 5 and move[0] in brac and move[1] in coordinates and move[2] in comma and move[
-            3] in coordinates and move[4] in brac1:
-            x = int(move[1])
-            y = int(move[3])
-            if valid_move(b_ord, playersymb, x, y) == False:
-                continue
-            else:
-                break
-        else:
-            print('Not Valid. Pls enter other move.')
-
-    return [x, y]
-
-
-def alphabeta(state, dep, maxdep, alpha, beta, player):
-
-
-    if player == +1:
-        possibleMoves = getbestmoves(state, symbol1)
-
-
-        if (dep >= maxdep):
-            value=EvalBoard(state, symbol1)
-            #print (dep)
+        if (depth >= maxDepth):
+            value = gameEvaluater(pos, White_Player)
+            # print (dep)
             return (value)
 
         for x, y in possibleMoves:
-            brd_cpy = copyboard(state)
-            makemove(brd_cpy, symbol1, x, y)
-            t = time()
-            st = abs(t - global_t)
-            if (st < time_allowed):
+            b = cloneBoard(pos)
+            makemove(b, White_Player, x, y)
+            tCurrent = time()
+            timeThreshold = abs(tCurrent - roundStartTime)
+            if (timeThreshold < tLimit):
 
-                val = alphabeta(brd_cpy, dep + 1, maxdep, alpha, beta, -player)
+                val = alphabeta(b, depth + 1, maxDepth, alpha, beta, -turn)
 
                 # print (val)
                 if val > alpha:
                     alpha = val
 
-                        # print(best)
-                        # print(alpha)
+                    # print(best)
+                    # print(alpha)
                 if beta <= alpha:
                     break
 
         return alpha
 
     else:
-        possibleMoves = getbestmoves(state, symbol2)
-        # t = time()
-        # st = abs(t - global_t)
-
-        if (dep >= maxdep):
-            value = EvalBoard(state, symbol2)
-            # print (dep)
-            return (value)
+        possibleMoves = getMoves(pos, Black_Player)
+        if (depth >= maxDepth):
+            value = gameEvaluater(pos, Black_Player)
+            return value
 
         for x, y in possibleMoves:
-            brd_cpy = copyboard(state)
-            makemove(brd_cpy, symbol2, x, y)
-            t = time()
-            st = abs(t - global_t)
-            if (st < time_allowed):
-                val = alphabeta(brd_cpy, dep + 1, maxdep, alpha, beta, player)  ## should change
+            brd_cpy = cloneBoard(pos)
+            makemove(brd_cpy, Black_Player, x, y)
+            tCurrent = time()
+            timeThreshold = abs(tCurrent - roundStartTime)
+            if (timeThreshold < tLimit):
+                value = alphabeta(brd_cpy, depth + 1, maxDepth, alpha, beta, turn)
 
-                if val < beta:
-                    beta = val
+                if value < beta:
+                    beta = value
 
                 if beta <= alpha:
                     break
 
         return beta
 
-
-def algorithm(mainboard, computersymb):
-    possiblemoves = getbestmoves(mainboard, computersymb)
-    #print (possiblemoves)
-    value = []
-    move = []
-    t = time()
-    st = abs(t - global_t)
-    while (st < time_allowed):
-        Maxdepth = 0
-        best = possiblemoves[0]
-        if possiblemoves!=[]:
-            for x,y in possiblemoves:
-                brd_cpy = copyboard(mainboard)
-                makemove(brd_cpy, computersymb, x, y)
-                val = alphabeta(brd_cpy, 0, Maxdepth, -10000, 10000, 1)
-                value.append(val)
-                Maxdepth = Maxdepth+1
-                move.append([x,y])
-                #print (val)
-            #moveindex = value.index(max(value))
-            #best = possiblemoves[moveindex]
-        return (move.pop())
-#def calculatedepth(time_allowed):
-    #branch = 15
-    #depth = 50
-    #
-    # nodenum = math.pow(branch, (3 * depth) / 4)
-    # # print(nodenum)
-    # nodetime = 7 / nodenum
-    # # print(nodetime)
-    # value = math.log((time_allowed / nodetime), 20)
-    # depthfin = (4 * value) / 3
-    # # print(depthfin)
-    # return math.floor(depthfin)
-
-
-def end_move(b_ord, playersymb):
-    # Returns a list of [x,y] lists of valid moves for the given player on the given board.
-
+def boardCounter(board):  # done
+    # Determine the score by counting the tiles. Returns a dictionary with keys 'X' and 'O'.
+    bScore = 0
+    wScore = 0
     for x in range(8):
         for y in range(8):
-            if valid_move(b_ord, playersymb, x, y):
+            if board[x][y] == 'X':
+                bScore += 1
+            if board[x][y] == 'O':
+                wScore += 1
+    return bScore - wScore
+
+
+def play(board, computersymb):
+    possiblemoves = getMoves(board, computersymb)
+    # print (possiblemoves)
+    action = []
+    value = []
+
+    tStart = time()
+    timeThrehold = abs(tStart - roundStartTime) #print(tStart - roundStartTime)
+    while (timeThrehold < tLimit):
+        Maxdepth = 12 # setting max depth to avoid extensive computing of the result
+        best = possiblemoves[0]
+        if possiblemoves != []:
+            for x, y in possiblemoves:
+                copy = cloneBoard(board)
+                makemove(copy, computersymb, x, y)
+                score = alphabeta(copy, 0, Maxdepth, -10000, 10000, 1)
+                value.append(score)
+                #Maxdepth = Maxdepth + 1
+                action.append([x, y])
+
+        return (action.pop())
+
+
+def isFinished(b_ord, playersymb):
+    # Returns true if no more plys left to play
+    for x in range(8):
+        for y in range(8):
+            if isValid(b_ord, playersymb, x, y):
                 return False
     return True
 
 
-def points(playersymb, computersymb):
-    # Prints out the current score.
-    scores = Score(mainboard)
-    # print('Player points %s . Computer points %s .' % (scores[playersymb], scores[computersymb]))
-
-
-
-
 def main():
-    # mainboard=b_ord
-    # resetboard()
-    global n, time_allowed, symbol, mainboard, global_t, b_ord, symbol1, symbol2
-    n = 8  # board size (even)
-    b_ord = [['.' for x in range(n + 1)] for y in range(n + 1)]
-    strt_time = None
-    # Maxdep=12
-    # makeboard='BEXEEOEEEEEXEOEEEEEEXOEEEEEEOOOEEEEEOOXXXEEOEEEXEEEEEOOOOEEEEEEEE'
-    # makeboard1=makeboard[1:]
-    time_allowed = int(sys.argv[2])
-    time_allowed = time_allowed
-    makeboard = sys.argv[1]
+    global board_size, tLimit, playerTurn, mainboard, roundStartTime, b_ord, White_Player, Black_Player
+    board_size = 8  # board_size = 9
+    b_ord = [['.' for x in range(board_size + 1)] for y in range(board_size + 1)]
+    #print(type(sys.argv[2]))
+    if len(sys.argv) < 2:
+        print("Error! input arguments must be in the following order: \n "
+              "Othello.py board time_limit")
+        return
+    elif int(sys.argv[2]) <= 0:
+        print("Time limit must be positive integer!")
+        return
 
-    br = board(makeboard)
-    mainboard = br
-    # fullboard()
-    symbol = makeboard[0]
+    # input_board='BEXEEOEEEEEXEOEEEEEEXOEEEEEEOOOEEEEEOOXXXEEOEEEXEEEEEOOOOEEEEEEEE'
+    input_board = sys.argv[1]
+    tLimit = int(sys.argv[2])
 
-    playersymb, computersymb = playersymbol(symbol)
-    symbol1 = 'O'
-    symbol2 = 'X'
+    mainboard = board(input_board)
 
-    p = getbestmoves(mainboard, computersymb)
+    playerTurn = input_board[0]
 
-    if (end_move(mainboard, computersymb) == True) or (p == []):
+    player, opponent = getPly(playerTurn)
+    White_Player = 'O'
+    Black_Player = 'X'
+
+    pmoves = getMoves(mainboard, opponent)
+
+    if isFinished(mainboard, opponent):
         print("pass")
+
+    elif pmoves == []:
+        print("pass")
+
     else:
-        tm = time()
-        global_t = tm
-
-        # Maxdepth = calculatedepth(time_allowed)
-        # Maxdepth = int(Maxdepth)
-        # print (Maxdepth)
-
-        x, y = algorithm(mainboard, computersymb)
-
-        end_time = time()
-
-        # print(abs(end_time - global_t))
-
-        # timess(strt_time)
-        # x = bestMove[0]
-        # y = bestMove[1]
-        # makemove(mainboard, playersymb, x, y)
-        # fullboard()
-        print('(%d,%d)' % (y + 1, x + 1))
+        roundStartTime = time()
+        r, c = play(mainboard, opponent)
+        print('(%d,%d)' % (c + 1, r + 1))
 
 
 if __name__ == '__main__':
